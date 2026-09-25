@@ -32,10 +32,10 @@ AI-DLC is a structured operating system for building software with AI assistance
 
 This guide uses the term **master rule file** to refer to the file that governs AI behaviour in your repository. Each tool has a different name and location for this file:
 
-| AI Tool | Master rule file | Location |
-|---|---|---|
-| **Claude Code** | `CLAUDE.md` | Repo root |
-| **Cursor** | `.cursorrules` | Repo root |
+| AI Tool            | Master rule file          | Location          |
+| ------------------ | ------------------------- | ----------------- |
+| **Claude Code**    | `CLAUDE.md`               | Repo root         |
+| **Cursor**         | `.cursorrules`            | Repo root         |
 | **GitHub Copilot** | `copilot-instructions.md` | `.github/` folder |
 
 The content of the master rule file is identical across tools. The only differences are the file name, the location, and — for GitHub Copilot — internal links to `{FRAMEWORK_ROOT}/` files must use the prefix `../{FRAMEWORK_ROOT}/` since the file lives inside `.github/`.
@@ -74,6 +74,7 @@ Ask the engineer:
 > "This codebase may be too large to analyse in one pass without overloading context. To keep each analysis pass focused and accurate, I'd like to work through it in segments.
 >
 > Please tell me:
+>
 > 1. Which modules, services, or folders are the highest priority for AI-DLC onboarding?
 > 2. Are there any areas I should skip entirely for now (e.g. legacy code not being actively worked on, third-party code, generated files)?
 > 3. Should I analyse one segment at a time and report findings before moving to the next, or would you prefer a summary across all agreed segments?"
@@ -81,6 +82,7 @@ Ask the engineer:
 Record the engineer's answers. Use them to define **analysis segments** — named, bounded slices of the codebase (e.g. "auth service", "payments module", "shared UI components"). Each segment is analysed independently across M1.1–M1.4, with findings reported to the engineer before moving to the next segment.
 
 **Rules for segmented analysis:**
+
 - Never read beyond the agreed segment boundary in a single pass
 - After completing each segment, present a findings summary and ask the engineer to confirm before continuing to the next segment
 - If a segment itself is too large for one context window, ask the engineer to break it down further before proceeding
@@ -148,16 +150,17 @@ Before classifying work, audit the existing codebase for defects and structural 
 
 **What to look for:**
 
-| Category | Examples |
-|---|---|
-| **Logic defects** | Incorrect business logic, off-by-one errors, wrong conditional branches, silent data loss |
-| **Design violations** | Responsibilities mixed across layers, circular dependencies, God classes or functions doing too much |
-| **Security gaps** | Unvalidated input, missing auth checks, secrets in code, direct DB calls from the wrong layer |
-| **Fragile patterns** | Catch-all error suppression, hardcoded values that should be config, mutable shared state |
-| **Test blind spots** | Code paths with no test coverage; tests that assert implementation details rather than behaviour |
-| **Consistency breaks** | Naming or structural conventions that differ across modules with no documented reason |
+| Category               | Examples                                                                                             |
+| ---------------------- | ---------------------------------------------------------------------------------------------------- |
+| **Logic defects**      | Incorrect business logic, off-by-one errors, wrong conditional branches, silent data loss            |
+| **Design violations**  | Responsibilities mixed across layers, circular dependencies, God classes or functions doing too much |
+| **Security gaps**      | Unvalidated input, missing auth checks, secrets in code, direct DB calls from the wrong layer        |
+| **Fragile patterns**   | Catch-all error suppression, hardcoded values that should be config, mutable shared state            |
+| **Test blind spots**   | Code paths with no test coverage; tests that assert implementation details rather than behaviour     |
+| **Consistency breaks** | Naming or structural conventions that differ across modules with no documented reason                |
 
 **Output:** A ranked list of findings. For each finding, record:
+
 - Location (file/module/function)
 - Category from the table above
 - Impact if inherited by new code
@@ -169,11 +172,11 @@ Present the list to the engineer and agree on which items must be corrected befo
 
 Classify all identified work — including findings from M1.3 — into three Bolt types:
 
-| Bolt Type | Description |
-|---|---|
-| **Enhancement Bolt** | New capabilities not yet in the system |
+| Bolt Type            | Description                                                      |
+| -------------------- | ---------------------------------------------------------------- |
+| **Enhancement Bolt** | New capabilities not yet in the system                           |
 | **Remediation Bolt** | Tech debt, coverage gaps, refactoring, and defects found in M1.3 |
-| **Migration Bolt** | Architectural changes that enable future work |
+| **Migration Bolt**   | Architectural changes that enable future work                    |
 
 **Prioritisation order:** Remediation of blocking defects found in M1.3 first → Enhancement (shows value) → Remediation of non-blocking debt → Migration last.
 
@@ -196,8 +199,8 @@ Each parallel session must produce a report in this exact structure so the main 
 **Scope:** [folders and modules covered]
 **Confidence:** High / Medium / Low
 (High = engineer is very familiar with this module;
- Medium = some familiarity;
- Low = cold analysis only, no domain knowledge applied)
+Medium = some familiarity;
+Low = cold analysis only, no domain knowledge applied)
 
 ---
 
@@ -206,41 +209,44 @@ Each parallel session must produce a report in this exact structure so the main 
 [Business-language description of each module in scope. What it does, not how.]
 
 **Service boundaries identified:**
+
 - [boundary description]
 
 **Integration points:**
+
 - [integration description]
 
 **Data flows:**
+
 - [flow description]
 
 ---
 
 ## M1.2 — Patterns Extracted
 
-| Pattern type | Observed convention | Example location |
-|---|---|---|
-| Naming | [convention] | [file/module] |
-| Error handling | [convention] | [file/module] |
-| API response shape | [convention] | [file/module] |
-| Auth pattern | [convention] | [file/module] |
-| Test pattern | [convention] | [file/module] |
-| ORM / DB access | [convention] | [file/module] |
+| Pattern type       | Observed convention | Example location |
+| ------------------ | ------------------- | ---------------- |
+| Naming             | [convention]        | [file/module]    |
+| Error handling     | [convention]        | [file/module]    |
+| API response shape | [convention]        | [file/module]    |
+| Auth pattern       | [convention]        | [file/module]    |
+| Test pattern       | [convention]        | [file/module]    |
+| ORM / DB access    | [convention]        | [file/module]    |
 
 ---
 
 ## M1.3 — Due Diligence Findings
 
-| # | Location | Category | Description | Impact | Recommendation |
-|---|---|---|---|---|---|
-| 1 | [file/function] | [category] | [description] | [impact] | Fix-in-place / Quarantine / Encode as prohibition |
+| #   | Location        | Category   | Description   | Impact   | Recommendation                                    |
+| --- | --------------- | ---------- | ------------- | -------- | ------------------------------------------------- |
+| 1   | [file/function] | [category] | [description] | [impact] | Fix-in-place / Quarantine / Encode as prohibition |
 
 ---
 
 ## M1.4 — Debt Classification
 
-| Work item | Bolt type | Priority | Notes |
-|---|---|---|---|
+| Work item     | Bolt type                             | Priority         | Notes   |
+| ------------- | ------------------------------------- | ---------------- | ------- |
 | [description] | Enhancement / Remediation / Migration | High / Med / Low | [notes] |
 
 ---
@@ -260,11 +266,11 @@ Once all Segment Reports are received:
 
 **Step 3 — Reconcile patterns.** For each pattern type in M1.2, compare findings across reports:
 
-| Situation | Action |
-|---|---|
-| Same convention found in 2+ segments | Mark as **Confirmed convention** — high confidence for the master rule file |
+| Situation                                             | Action                                                                           |
+| ----------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Same convention found in 2+ segments                  | Mark as **Confirmed convention** — high confidence for the master rule file      |
 | Different conventions found for the same pattern type | Mark as **Inconsistency** — flag to engineer for resolution before writing rules |
-| Convention found in only one segment | Mark as **Unconfirmed** — note the segment scope and treat with lower confidence |
+| Convention found in only one segment                  | Mark as **Unconfirmed** — note the segment scope and treat with lower confidence |
 
 **Step 4 — Consolidate due diligence findings.** Merge all M1.3 findings into a single ranked list. Apply a confidence boost to any finding that appears in more than one report independently — these have been confirmed by multiple analysts without coordination and are high-priority. Flag any finding where two reports directly contradict each other (e.g. one reports a pattern as consistent, another reports it as absent) — these require engineer resolution.
 
@@ -299,6 +305,7 @@ Create the governance layer on top of the existing codebase. All five artefacts 
 #### M2.1 — Master Rule File
 
 The most important file in the overlay. See **Before You Begin** for the correct file name and location for your AI tool. Must contain:
+
 - Architecture context derived from M1.1
 - Coding conventions extracted in M1.2
 - Forbidden zones (see M2.2)
@@ -312,9 +319,9 @@ Follow the full master rule file authoring instructions in Step 2 of this guide,
 Create `{FRAMEWORK_ROOT}/guidelines/forbidden-zones.md` containing an explicit list of files, modules, or patterns that the AI must **not** modify without senior engineer approval. This protects stable, business-critical code from accidental change.
 
 ```markdown
-| Zone | Path / Pattern | Reason | Approval required from |
-|---|---|---|---|
-| <name> | <path or glob> | <why it is protected> | <role> |
+| Zone   | Path / Pattern | Reason                | Approval required from |
+| ------ | -------------- | --------------------- | ---------------------- |
+| <name> | <path or glob> | <why it is protected> | <role>                 |
 ```
 
 Reference this file in the master rule file under Code Rules (Section 3) so it is enforced in every session.
@@ -324,9 +331,9 @@ Reference this file in the master rule file under Code Rules (Section 3) so it i
 Create `{FRAMEWORK_ROOT}/guidelines/entry-points.md` containing the approved list of modules and features where AI-DLC Bolts may begin. This controls the expansion boundary. Update the list as the team gains confidence with the process.
 
 ```markdown
-| Module / Feature | Status | Notes |
-|---|---|---|
-| <name> | Approved / Pending / Blocked | <any constraints> |
+| Module / Feature | Status                       | Notes             |
+| ---------------- | ---------------------------- | ----------------- |
+| <name>           | Approved / Pending / Blocked | <any constraints> |
 ```
 
 #### M2.4 — Coding Conventions File
@@ -336,6 +343,7 @@ Create `{FRAMEWORK_ROOT}/rules/code-standards.md` (or populate it if it already 
 #### M2.5 — Seed Codebase Findings
 
 Copy `_template.md` and `README.md` verbatim from `process-onboarding-agent/ops/inception/codebase-findings/` to `{FRAMEWORK_ROOT}/ops/inception/codebase-findings/`. Then, for each segment analyzed in Phase M1, create one finding file from `_template.md` (e.g. `payments-service.md`) populated from that segment's M1.1–M1.4 output:
+
 - **Summary** — from the segment's architecture mapping (M1.1)
 - **Findings** — one dated entry per segment, attributed to `Initial archaeology (M1)` rather than an intent slug, covering the patterns extracted (M1.2), due diligence findings (M1.3), and debt classification (M1.4)
 - **Open Questions** — anything M1 flagged with low confidence or could not resolve from code alone
@@ -361,11 +369,13 @@ Every change introduced by AI-DLC into an existing module must be wrapped in a f
 Every Bolt that affects existing code must carry the following AC by default. It has two forms depending on Bolt classification:
 
 **Standard form** (Enhancement Bolts and all Bolts not classified as Migration or Remediation):
+
 > **"All integration tests for [affected module] pass without modification."**
 
 This AC is non-negotiable and cannot be removed during elaboration.
 
 **Contract-change form** (Migration Bolts and Remediation Bolts that explicitly change contract boundaries — e.g. API shapes, data schemas, inter-module interfaces):
+
 > **"All integration tests for [affected module] pass without modification, except for tests that cover the contract boundaries listed as breaking changes below. Each breaking change must be detailed and approved in the elaboration session before any code is generated."**
 
 When the contract-change form applies, the elaboration session must produce a **Breaking Changes Register** — a table attached to the unit file listing every changed contract boundary, the reason it must change, and the name of the engineer who approved it. No unit using the contract-change form may be executed without a completed and approved Breaking Changes Register.
@@ -403,29 +413,37 @@ For fresh projects the agent cannot read a codebase to populate the master rule 
 **Interview sequence:**
 
 1. **Product identity**
+
    > "In one sentence, what does this product do and who uses it?"
 
 2. **Technology stack — backend**
+
    > "What language and framework will the backend use? (e.g., Node/Express, Python/FastAPI, .NET/ASP.NET Core)"
 
 3. **Technology stack — frontend**
+
    > "What language and framework will the frontend use? (e.g., React/TypeScript, Vue, server-rendered only)"
 
 4. **Database and auth**
+
    > "What database will you use, and how will authentication work? (e.g., PostgreSQL with Supabase Auth, MongoDB with JWT)"
 
 5. **System boundaries**
+
    > "Are there any hard rules about what must never happen architecturally? (e.g., 'the frontend must never call the database directly', 'the mobile app communicates only through the REST API')"
 
 6. **Domain language**
+
    > "List the key business terms this system uses — the words that appear in your domain, not generic tech terms. For each one, give a one-sentence definition. (e.g., 'Booking — a confirmed reservation between a guest and a host')"
    >
-   > *Keep asking "any more?" until the engineer says done.*
+   > _Keep asking "any more?" until the engineer says done._
 
 7. **Known constraints and prohibitions**
+
    > "Are there any technical choices that are already decided and must not be changed by the AI? (e.g., 'we must use REST, not GraphQL', 'no ORM — raw SQL only', 'all prices stored as integers in cents')"
 
 8. **First capability**
+
    > "What is the first feature or capability you want to build? Give it a name and one sentence describing what it does for the user."
 
 9. **Documentation archive threshold**
@@ -434,6 +452,7 @@ For fresh projects the agent cannot read a codebase to populate the master rule 
 ---
 
 Once all nine questions are answered, the agent has enough to:
+
 - Create the folder structure (Step 1)
 - Write the master rule file with Sections 1–5, Section 8, and Process Configuration fully populated, and Sections 10 (Notifications) and 11 (AI Hub Metrics) as `Status: Disabled` until Step 4 settles them
 - Write an initial first intent file from the answer to question 8
@@ -509,6 +528,7 @@ The master rule file is loaded automatically by your AI tool every session. See 
 ### Section 1 — Project Identity
 
 State what the system is and its technology stack. Be specific — the AI needs to know:
+
 - What the product does (one sentence)
 - Backend language/framework and key patterns
 - Frontend language/framework
@@ -519,11 +539,13 @@ State what the system is and its technology stack. Be specific — the AI needs 
 ## 1. Project Identity
 
 **<ProjectName>** is a <one-sentence description>.
+
 - Backend: <language/framework, key patterns>
 - Frontend: <language/framework>
 - Database: <database, auth approach>
 
 **System boundaries:**
+
 - <boundary rule 1>
 - <boundary rule 2>
 ```
@@ -547,12 +569,14 @@ Three to five **hard-stop prohibitions** that the AI must have in working memory
 ## 3. Code Rules
 
 **Hard stops — memorise, never look up:**
+
 - Never commit secrets, API keys, or connection strings
 - Never trust client-supplied IDs without server-side ownership verification
 - Never expose internal stack traces to the client
 - [1–2 stack-specific absolute prohibitions from the project interview]
 
 **Full rules (read before writing any code):**
+
 - Conventions and patterns: `{FRAMEWORK_ROOT}/rules/code-standards.md`
 - Security rules: `{FRAMEWORK_ROOT}/rules/security.md`
 - Architecture decisions: `{FRAMEWORK_ROOT}/rules/architecture.md`
@@ -570,6 +594,7 @@ A mandatory-read instruction plus the two or three terms most likely to cause lo
 Read `{FRAMEWORK_ROOT}/guidelines/domain-glossary.md` before every elaboration session and before generating any business logic. Use only the terms defined there — do not substitute synonyms.
 
 **Critical terms (load immediately):**
+
 - **[Term]:** [one-line definition]
 - **[Term]:** [one-line definition]
 ```
@@ -594,13 +619,16 @@ The turn structure is short enough to hold in working memory — keep it inline.
 ## 6. AI-DLC Workflow
 
 **Session start check:** At the beginning of every session, present the following note to the engineer:
+
 > "At any point during this session, if you have a question about a step, need further clarification, or don't have the exact answer to a question I'm asking — just say so. I'll help you work through it so we don't get blocked."
 
 Then read the `Next dependency audit` date from Section 9. If today is on or after that date, prompt the engineer before any other work:
+
 > "A dependency and security audit is scheduled. Would you like to run it now, or set a new date?"
-If the engineer defers, ask for the new date and update Section 9 before continuing.
+> If the engineer defers, ask for the new date and update Section 9 before continuing.
 
 **Elaboration turn structure (strictly one unit per turn):**
+
 1. Propose one unit — name and one-sentence purpose only. Stop.
 2. Propose ACs as a numbered list. Stop.
 3. Surface edge cases and open questions. Stop.
@@ -612,7 +640,7 @@ If the engineer defers, ask for the new date and update Section 9 before continu
 **Full elaboration protocol (including design session):** read `{FRAMEWORK_ROOT}/skills/mob-elab-prompts.md` before every elaboration session. The design session runs as Phase 0 of elaboration — it is not invoked separately.
 **Codebase findings:** before analyzing existing code to understand a new intent's dependencies on prior implementation, check `{FRAMEWORK_ROOT}/ops/inception/codebase-findings/README.md` for an existing file on that module/area; after any such analysis, record or update the finding there. This is part of the mandatory elaboration protocol above, not a separate skill.
 **Bolt risk assessment:** read `{FRAMEWORK_ROOT}/skills/bolt-risk-assessment.md` after elaboration sign-off and before the first unit in a bolt executes. No unit may begin execution without a signed-off risk assessment in the bolt file.
-**Elaboration-to-build handoff gate:** after elaboration sign-off, do not execute any implementation work until every agreed unit has a materialized unit file, an owning bolt, a matching backlog entry, and a link from the intent's Extracted Units table. If any artifact or link is missing, stop and report the incomplete handoff instead of proceeding.
+**Elaboration-to-build handoff gate:** after elaboration sign-off, do not execute any implementation work until every agreed unit has a materialized unit file, an owning bolt, a matching backlog entry, and a link from the intent's Extracted Units table. If any artifact or link is missing, stop and report the incomplete handoff instead of proceeding. Once the checks pass, set the owning bolt's `Artifact handoff` field to `Complete` before planning or executing the bolt.
 **UAT skill:** read `{FRAMEWORK_ROOT}/skills/uat.md` when all units under an intent are marked Done, or when the engineer invokes it directly. Prompt the engineer to run UAT before setting intent status to Implemented.
 **Progress digest skill:** read `{FRAMEWORK_ROOT}/skills/progress-digest.md` when the engineer asks for a stakeholder update, progress summary, or digest for an intent.
 **Process health skill:** read `{FRAMEWORK_ROOT}/skills/process-health.md` when the engineer invokes it to audit how well the AI-DLC process is functioning.
@@ -653,10 +681,10 @@ A single table of project-level process settings that govern AI-DLC behaviour. P
 ```markdown
 ## 9. Process Configuration
 
-| Setting | Value | Notes |
-|---|---|---|
-| **Archive threshold** | [X] months | Documents older than this qualify for archiving via the compact-docs skill |
-| **Last dependency audit** | — | Updated automatically each time the dependency-audit skill runs |
+| Setting                   | Value      | Notes                                                                          |
+| ------------------------- | ---------- | ------------------------------------------------------------------------------ |
+| **Archive threshold**     | [X] months | Documents older than this qualify for archiving via the compact-docs skill     |
+| **Last dependency audit** | —          | Updated automatically each time the dependency-audit skill runs                |
 | **Next dependency audit** | YYYY-MM-DD | AI prompts at session start on or after this date; default interval is 30 days |
 ```
 
@@ -682,17 +710,17 @@ The question of whether the team wants notifications is asked in Step 4, when th
 
 Events that notify (see `{FRAMEWORK_ROOT}/skills/notifications.md` for message format):
 
-| Event | Priority | Layer |
-|---|---|---|
-| Turn ended — work done, question asked, or awaiting the next prompt | normal | harness |
-| Attention needed — permission request or idle prompt | high | harness |
-| Elaboration sign-off required | high | lifecycle |
-| Bolt complete → retro due | normal | lifecycle |
-| UAT sign-off required | high | lifecycle |
-| Intent implemented | normal | lifecycle |
-| Incident logged / hotfix started | high | lifecycle |
-| Circuit breaker tripped | high | lifecycle |
-| Dependency audit due | high | lifecycle |
+| Event                                                               | Priority | Layer     |
+| ------------------------------------------------------------------- | -------- | --------- |
+| Turn ended — work done, question asked, or awaiting the next prompt | normal   | harness   |
+| Attention needed — permission request or idle prompt                | high     | harness   |
+| Elaboration sign-off required                                       | high     | lifecycle |
+| Bolt complete → retro due                                           | normal   | lifecycle |
+| UAT sign-off required                                               | high     | lifecycle |
+| Intent implemented                                                  | normal   | lifecycle |
+| Incident logged / hotfix started                                    | high     | lifecycle |
+| Circuit breaker tripped                                             | high     | lifecycle |
+| Dependency audit due                                                | high     | lifecycle |
 ```
 
 Add or remove events from the table to tune what the project is alerted on. Read and applied by the notifications skill; if this section is absent, notifications are treated as disabled. Keep the two sign-off events even though the turn-ended hook also fires there. The harness message is instant but generic ("finished its turn"); the lifecycle message says which moment and what is needed. Removing the lifecycle events leaves only the ping that cannot say why.
@@ -712,12 +740,12 @@ The question of whether the team wants AI Hub metrics is asked in Step 4, when t
 
 Events that push (see `{FRAMEWORK_ROOT}/skills/ai-hub-metrics.md` for the correlationId/actor mapping):
 
-| Event | Priority | `correlationId` |
-|---|---|---|
-| Unit marked Done | normal | unit id |
-| Bolt complete | normal | bolt id |
-| UAT sign-off recorded | normal | intent id |
-| Intent implemented | normal | intent id |
+| Event                 | Priority | `correlationId` |
+| --------------------- | -------- | --------------- |
+| Unit marked Done      | normal   | unit id         |
+| Bolt complete         | normal   | bolt id         |
+| UAT sign-off recorded | normal   | intent id       |
+| Intent implemented    | normal   | intent id       |
 ```
 
 Add or remove events from the table to tune what the project reports to AI Hub. Read and applied by the ai-hub-metrics skill; if this section is absent, AI Hub metrics are treated as disabled.
@@ -729,6 +757,7 @@ Add or remove events from the table to tune what the project reports to AI Hub. 
 ### `rules/prompt-quality-gate.md`
 
 Defines the four components in detail with examples of complete and incomplete requests. Include:
+
 - What each component means
 - The order to ask for missing components
 - An example of an incomplete request and the correct response
@@ -737,6 +766,7 @@ Defines the four components in detail with examples of complete and incomplete r
 ### `rules/code-standards.md`
 
 Document your stack's patterns and anti-patterns. Key sections:
+
 - Languages & runtimes
 - Naming conventions (per language)
 - Framework patterns (backend and frontend)
@@ -750,6 +780,7 @@ Document your stack's patterns and anti-patterns. Key sections:
 ### `rules/security.md`
 
 Two sections:
+
 - **Never do these** — injection, auth gaps, secrets, data exposure
 - **Always do these** — input validation, auth on every endpoint, least privilege
 
@@ -761,6 +792,7 @@ One ADR per significant decision. Format:
 
 ```markdown
 ### ADR-001 — <Decision title>
+
 **Decision:** <what was decided>
 **Why:** <the reasoning>
 **Trade-off:** <what you gave up>
@@ -781,11 +813,13 @@ Copy this file verbatim from `process-onboarding-agent/rules/engagement.md` to `
 ### `skills/mob-elab-prompts.md`
 
 The mob elaboration reference. Must include:
+
 - **Solution Shape check (before anything else):** at the very start of every elaboration session, read the intent and check for a `## Solution Shape` section. If it is missing and the intent introduces a new capability, a potentially reusable surface, or an expensive-to-reverse decision, ask the engineer once:
 
   > "This intent has no recorded solution shape. Run Solution Shaping first (`{FRAMEWORK_ROOT}/skills/solution-shaping.md`) to decide generic-vs-specific, simplest-viable, and extend-vs-build — or proceed straight to design?"
 
   The engineer decides: run it (then resume elaboration with the recorded shape as binding context), or proceed as-is. Never block. For plainly small, feature-specific intents, skip this prompt and go straight to mode selection.
+
 - **Elaboration Mode Selection:** at the very start of every elaboration session, before Phase 0, ask the engineer which mode they prefer:
 
   > "Before we begin — which elaboration mode would you like to use?
@@ -813,18 +847,19 @@ The mob elaboration reference. Must include:
 
 Structured review sections covering all five AI failure modes:
 
-| Section | Failure mode covered |
-|---|---|
-| Functional Correctness | Logic errors that look correct |
-| Code Quality | Over-engineering; dead code |
-| Security | Security vulnerabilities |
-| Architecture | Architectural drift |
-| Tests | Logic errors; hallucinations |
-| AI-Specific Checks | Hallucinated library calls; prompt log; scope creep |
-| Observability | Missing production evidence; silent failures |
-| Deployment Readiness | Configuration errors; breaking changes |
+| Section                | Failure mode covered                                |
+| ---------------------- | --------------------------------------------------- |
+| Functional Correctness | Logic errors that look correct                      |
+| Code Quality           | Over-engineering; dead code                         |
+| Security               | Security vulnerabilities                            |
+| Architecture           | Architectural drift                                 |
+| Tests                  | Logic errors; hallucinations                        |
+| AI-Specific Checks     | Hallucinated library calls; prompt log; scope creep |
+| Observability          | Missing production evidence; silent failures        |
+| Deployment Readiness   | Configuration errors; breaking changes              |
 
 Key items that must be present:
+
 - Feature verified in a real environment — tests passing alone is not sufficient
 - Nothing in the diff beyond what the ACs required (no extra abstractions or future-proofing)
 - Diff checked against system boundaries in `architecture.md`
@@ -857,7 +892,7 @@ The notifications skill sends Slack alerts at the delivery moments that need a h
 
 Copy this file verbatim from `process-onboarding-agent/skills/notifications.md` to `{FRAMEWORK_ROOT}/skills/notifications.md`. No customization of the skill file is needed — per-project settings (event set, enabled/disabled) live in the master rule file Notifications section, and the endpoint lives in an environment variable.
 
-**During onboarding:** run the *Onboarding setup* steps inside the skill, in the order given there. The order matters — each step depends on an earlier one:
+**During onboarding:** run the _Onboarding setup_ steps inside the skill, in the order given there. The order matters — each step depends on an earlier one:
 
 1. Ask whether the engineer wants notifications. It is a personal setup: their own channel, their own webhook, this machine only. Each teammate repeats it, which is why `new-engineer-induction` prompts joiners.
 2. Add `scripts/notify.env`, `.envrc` and `.claude/settings.local.json` to `.gitignore` **before** any webhook URL exists, and confirm with `git check-ignore`.
@@ -866,9 +901,9 @@ Copy this file verbatim from `process-onboarding-agent/skills/notifications.md` 
 5. Hand the engineer the two credential steps — create the channel and webhook, then write `scripts/notify.env` — and wait. These are the only framework steps the AI cannot perform. Never ask them to paste a webhook URL into the conversation or a committed file. When they confirm, verify with a test send.
 6. Install the turn-ended and needs-attention hooks in the tool's own hook config — `.claude/settings.json`, `.cursor/hooks.json`, or `.github/hooks/notify.json`. All three tools support hooks, and they call the script from step 3.
 7. Populate the master rule file Notifications section (Section 10).
-8. Send one test notification and confirm it arrived *without* a permission prompt.
+8. Send one test notification and confirm it arrived _without_ a permission prompt.
 
-The skill's *What each AI tool gets* table lists the hook event names and config file per tool — walk through it with the team so nobody expects a ping their tool does not send.
+The skill's _What each AI tool gets_ table lists the hook event names and config file per tool — walk through it with the team so nobody expects a ping their tool does not send.
 
 **Section 6 routing line:** already written as part of the Section 6 template in Step 2 — do not add a second one. Verify it is present, and write Section 10 here.
 
@@ -878,20 +913,20 @@ The ai-hub-metrics skill pushes usage/activity events to 99x AI Hub at delivery 
 
 Copy this file verbatim from `process-onboarding-agent/skills/ai-hub-metrics.md` to `{FRAMEWORK_ROOT}/skills/ai-hub-metrics.md`. No customization of the skill file is needed — per-project settings (event set, enabled/disabled) live in the master rule file AI Hub Metrics section, and the endpoint/credential/workflow ids live in environment variables.
 
-**During onboarding:** run the *Onboarding setup* steps inside the skill, in the order given there:
+**During onboarding:** run the _Onboarding setup_ steps inside the skill, in the order given there:
 
 1. Ask whether the project wants AI Hub metrics. It is a project-wide setup — one team, one workflow, one shared credential.
 2. Add `scripts/ai-hub.env`, `.envrc`, and `.claude/settings.local.json` to `.gitignore` **before** any credential exists (these may already be gitignored from the notifications skill — do not duplicate entries).
 3. Create `scripts/ai-hub-push.sh` at the **repository root** — everything else calls it, so it comes first.
 4. Approve that command in the tool's allowlist so pushes do not prompt.
-5. Hand the engineer Step 1 (model the workflow, mint a team API key) and Step 2 (write `scripts/ai-hub.env`) of the skill's *Who does what* — and wait. These are the only steps the AI cannot perform. Never ask them to paste the API key into the conversation or a committed file. When they confirm, verify with a test push.
+5. Hand the engineer Step 1 (model the workflow, mint a team API key) and Step 2 (write `scripts/ai-hub.env`) of the skill's _Who does what_ — and wait. These are the only steps the AI cannot perform. Never ask them to paste the API key into the conversation or a committed file. When they confirm, verify with a test push.
 6. Populate the master rule file AI Hub Metrics section (Section 11).
-7. Send one test push and confirm it appears in the AI Hub workflow's event list *without* a permission prompt.
-8. Present the skill's *Status summary* card to the engineer — what is being pushed, where it goes, and the exact phrases to enable, disable, or silence it. This is the hand-off moment: the engineer should not have to re-read the skill file later just to know how to turn it off.
+7. Send one test push and confirm it appears in the AI Hub workflow's event list _without_ a permission prompt.
+8. Present the skill's _Status summary_ card to the engineer — what is being pushed, where it goes, and the exact phrases to enable, disable, or silence it. This is the hand-off moment: the engineer should not have to re-read the skill file later just to know how to turn it off.
 
 **Section 6 routing line:** already written as part of the Section 6 template in Step 2 — do not add a second one. Verify it is present, and write Section 11 here.
 
-**The enable/disable switch is conversational, not just a file edit.** Once installed, "enable AI Hub metrics" / "disable AI Hub metrics" flips Section 11's `Status` field directly and is project-wide — it takes effect for every engineer's next session, unlike notifications' per-engineer setup. Keep this distinct from "turn off AI Hub metrics for this session," which is non-persistent and does not touch Section 11. See the skill's *Enabling and disabling* section for the exact behavior in each case.
+**The enable/disable switch is conversational, not just a file edit.** Once installed, "enable AI Hub metrics" / "disable AI Hub metrics" flips Section 11's `Status` field directly and is project-wide — it takes effect for every engineer's next session, unlike notifications' per-engineer setup. Keep this distinct from "turn off AI Hub metrics for this session," which is non-persistent and does not touch Section 11. See the skill's _Enabling and disabling_ section for the exact behavior in each case.
 
 ### `skills/solution-shaping.md`
 
@@ -1106,16 +1141,17 @@ Full descriptions of each known edge case: the scenario, the required behavior, 
 ### `guidelines/acceptance-patterns.md`
 
 Rules for writing good Given/When/Then ACs:
+
 - One behavior per criterion (no compound ACs)
 - Name the actor in every Given
 - Cover at least one unhappy path per unit
 - No implementation details in ACs
 - Anti-patterns to avoid (vague outcomes, testing implementation not behavior)
 
-
 ### `guidelines/dev-setup.md`
 
 Step-by-step environment setup for a new engineer:
+
 - All prerequisites with version checks
 - Configuration files needed and what goes in them (no actual secrets — explain how to get them)
 - How to start each service
@@ -1133,6 +1169,7 @@ Covers: git branching conventions, environment isolation, secrets management, ba
 Each template file defines the structure for its artifact type. The key templates:
 
 ### `ops/inception/intents/_template.md`
+
 Fields: Status, Date, Owner, **AI Risk** (Minimal / Limited / High — see template for definitions), What, Why, Success Looks Like, Assumptions, Open Questions, Out of Scope, Elaboration Sessions, Extracted Units, UAT Sign-off, Implementation Summary.
 
 The **AI Risk** field gates the review level required: Minimal → standard review; Limited → named engineer sign-off on ACs before elaboration and on Implementation Summary before merge; High → senior engineer approval before any elaboration begins, plus all Limited controls.
@@ -1145,6 +1182,7 @@ The **Implementation Summary** section is written by the AI once all units under
 4. **Known Limitations and Future Considerations** — constraints the current implementation imposes on future changes; write "None identified" if none
 
 When the last unit of an intent is confirmed done, the AI must:
+
 1. Set the intent status to **Implemented**
 2. Write the Implementation Summary by reading the elaboration session files, unit files, and bolt retros for this intent
 3. Ask the engineer to review the summary before closing the intent
@@ -1152,17 +1190,21 @@ When the last unit of an intent is confirmed done, the AI must:
 The Implementation Summary is the authoritative reference for future Bolts that modify or extend this feature. Any Bolt touching a feature covered by an intent must read its Implementation Summary before elaboration begins.
 
 ### `ops/build/units/_template.md`
+
 Fields: Status, Intent link, Elaboration link, Bolt link, Priority, Context, Acceptance Criteria, Scope (in/out), Dependencies, Pre-generation Checks, Edge Cases to Handle, Definition of Done, Prompt Log link, Notes.
 
 The **Pre-generation Checks** section is critical for wrapper/layout units — list grep patterns to run across existing files before generating to surface duplication.
 
 ### `ops/build/bolts/_template.md`
-Fields: Status, Goal, Start/Target/Completed dates, Units table, Execution Order diagram, Risks & Assumptions, Definition of Done, Retrospective link.
+
+Fields: Status, Goal, Start/Target/Completed dates, Artifact handoff, Units table, Execution Order diagram, Risks & Assumptions, Definition of Done, Retrospective link.
 
 ### `ops/operate/retros/_template.md`
+
 Sections: What Went Well, What Didn't Go Well, AI-Specific Observations (prompts that worked / needed revision / quality gate failures / output accepted without enough review), Actions table, Improvements Triggered (**required** — cannot be left blank without a stated reason), New Intents Triggered, Post-Retro Improvement Workflow.
 
 **The Post-Retro Improvement Workflow is mandatory and AI-driven.** Immediately after the retro document is complete, the AI must:
+
 1. Synthesize every finding in "What Didn't Go Well" and "AI-Specific Observations" into concrete improvement proposals — one per finding — identifying the exact file and text to change
 2. Present all proposals to the engineer for approval, rejection, or revision before touching any file
 3. **For each approved proposal:** check which open or in-progress units reference the section being changed (Pre-generation Checks, ACs, or referenced rule files) and present the impact list to the engineer before applying. Record affected units in the improvement file.
@@ -1172,6 +1214,7 @@ Sections: What Went Well, What Didn't Go Well, AI-Specific Observations (prompts
 The intent is that every retro automatically tightens the rules, skills, and guidelines that govern the next bolt. No finding should require the engineer to manually translate it into a file change.
 
 ### `ops/operate/improvements/_template.md`
+
 Fields: Triggered by (retro/incident link), Target file, Current text, Proposed replacement, Reason, Validation criteria, Status, Applied date.
 
 ---
@@ -1179,6 +1222,7 @@ Fields: Triggered by (retro/incident link), Target file, Current text, Proposed 
 ## Step 7 — Write Instructions2FDE.md
 
 This is the main onboarding document for every engineer. Sections:
+
 1. What AI-DLC is (the loop diagram: Inception → Build → Operate → Improvements)
 2. How to invoke each ceremony by talking to the AI (not by following manual steps)
 3. What the engineer still owns (review, AC confirmation, running tests, edge case checks)
@@ -1198,33 +1242,39 @@ This is the main onboarding document for every engineer. Sections:
 
 By this point your master rule file should exist at the correct path for your chosen tool (see **Before You Begin**). Verify:
 
-| Tool | Expected path | Loaded automatically? |
-|---|---|---|
-| Claude Code | `CLAUDE.md` at repo root | Yes — every session |
-| Cursor | `.cursorrules` at repo root | Yes — every session |
-| GitHub Copilot | `.github/copilot-instructions.md` | Yes — every session |
+| Tool           | Expected path                     | Loaded automatically? |
+| -------------- | --------------------------------- | --------------------- |
+| Claude Code    | `CLAUDE.md` at repo root          | Yes — every session   |
+| Cursor         | `.cursorrules` at repo root       | Yes — every session   |
+| GitHub Copilot | `.github/copilot-instructions.md` | Yes — every session   |
 
 ### Supporting multiple tools in the same repo
 
 If your team uses more than one AI tool, create copies of the master rule file for each additional tool. The content is identical — only the file name, location, and internal link prefixes differ.
 
 **Add Cursor support** (if your primary tool is Claude Code or Copilot):
+
 ```bash
 cp CLAUDE.md .cursorrules
 ```
+
 Open `.cursorrules` and update the opening line to reference Cursor.
 
 **Add GitHub Copilot support** (if your primary tool is Claude Code or Cursor):
+
 ```bash
 mkdir -p .github
 cp CLAUDE.md .github/copilot-instructions.md
 ```
+
 Open `.github/copilot-instructions.md`, update the opening line to reference GitHub Copilot, and change all `{FRAMEWORK_ROOT}/` link prefixes to `../{FRAMEWORK_ROOT}/`.
 
 **Add Claude Code support** (if your primary tool is Cursor or Copilot):
+
 ```bash
 cp .cursorrules CLAUDE.md   # or copy from .github/copilot-instructions.md
 ```
+
 Open `CLAUDE.md`, update the opening line to reference Claude Code, and if copying from Copilot change all `../{FRAMEWORK_ROOT}/` prefixes back to `{FRAMEWORK_ROOT}/`.
 
 ### Sync discipline
@@ -1261,24 +1311,29 @@ The quality of the framework depends entirely on two things:
 When the agent has finished executing this guide, it must output a structured completion report before handing back to the engineer. The report must contain:
 
 ### 1. Files Created
+
 A table of every file written during onboarding, grouped by folder.
 
-| File | Status | Notes |
-|---|---|---|
+| File                             | Status  | Notes                   |
+| -------------------------------- | ------- | ----------------------- |
 | `CLAUDE.md` (or tool equivalent) | Created | Sections 1–11 populated |
-| `{FRAMEWORK_ROOT}/rules/...` | Created | … |
-| *(etc.)* | | |
+| `{FRAMEWORK_ROOT}/rules/...`     | Created | …                       |
+| _(etc.)_                         |         |                         |
 
 ### 2. Sections Requiring Engineer Review
+
 List every section or field in the master rule file that the agent could not populate from the codebase and left as a placeholder. The engineer must fill these before the first Bolt runs.
 
 ### 3. Open Questions
+
 Any ambiguity the agent encountered that the engineer must resolve — e.g., conflicting patterns found in the codebase, modules where ownership was unclear, or test coverage below the gate threshold.
 
 ### 4. First Recommended Action
+
 One sentence: what the engineer should do next before starting the experience agent (e.g., "Review the domain glossary placeholders in Section 4 of the master rule file, then start a new session to begin the first mob elaboration.").
 
 ### 4b. Optional Offer — Product Engineering Essentials Check
+
 Before the mandatory handoff (item 5), offer the engineer the essentials check once — do not run it, only offer it:
 
 > "One optional thing before you go: I can run a Product Engineering Essentials check — a ten-pillar checklist (vision, domain understanding, requirements, UX, architecture, engineering practices, DevOps, quality engineering, security/compliance, and the delivery feedback loop) showing what's already in place in this repo and what isn't. It's not a gate — nothing blocks on it — just a shared picture of the gaps. Want to run it now, or skip it? You can always run it later by saying 'run product engineering essentials.'"
@@ -1296,6 +1351,7 @@ This is the final and mandatory step. After the report is presented, the agent m
 > **This session is now finished. Do not continue working in this conversation.** The onboarding session has accumulated context — interview answers, archaeology findings, file creation history — that is no longer needed and will slow down and distort future AI sessions.
 >
 > **To start the experience agent:**
+>
 > 1. Close or end this conversation entirely.
 > 2. Open a brand new session inside your project repository using your AI tool ([Claude Code / Cursor / GitHub Copilot]).
 > 3. Your AI tool will automatically load `[master rule file path]` at the start of the session.
@@ -1312,11 +1368,13 @@ This is the final and mandatory step. After the report is presented, the agent m
 ## Checklist: Ready to Start
 
 **Tool setup**
+
 - [ ] AI tool identified (Claude Code / Cursor / GitHub Copilot)
 - [ ] Master rule file created at the correct path for your tool (see Before You Begin)
 - [ ] Mirror files created for any additional tools in use (see Step 8)
 
 **Framework files**
+
 - [ ] Folder structure created (`{FRAMEWORK_ROOT}/` tree from Step 1)
 - [ ] Master rule file written with all 11 sections (Step 2)
 - [ ] `rules/` files written (prompt-quality-gate, code-standards, security, architecture)
@@ -1327,4 +1385,5 @@ This is the final and mandatory step. After the report is presented, the agent m
 - [ ] `{FRAMEWORK_ROOT}/README.md` written
 
 **First iteration**
+
 - [ ] First intent written and ready for mob elaboration
