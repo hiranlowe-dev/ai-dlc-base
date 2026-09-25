@@ -612,7 +612,7 @@ If the engineer defers, ask for the new date and update Section 9 before continu
 **Full elaboration protocol (including design session):** read `{FRAMEWORK_ROOT}/skills/mob-elab-prompts.md` before every elaboration session. The design session runs as Phase 0 of elaboration — it is not invoked separately.
 **Codebase findings:** before analyzing existing code to understand a new intent's dependencies on prior implementation, check `{FRAMEWORK_ROOT}/ops/inception/codebase-findings/README.md` for an existing file on that module/area; after any such analysis, record or update the finding there. This is part of the mandatory elaboration protocol above, not a separate skill.
 **Bolt risk assessment:** read `{FRAMEWORK_ROOT}/skills/bolt-risk-assessment.md` after elaboration sign-off and before the first unit in a bolt executes. No unit may begin execution without a signed-off risk assessment in the bolt file.
-**Elaboration-to-build handoff gate:** after elaboration sign-off, do not execute any implementation work until every agreed unit has a materialized unit file, an owning bolt, a matching backlog entry, and a link from the intent's Extracted Units table. If any artifact or link is missing, stop and report the incomplete handoff instead of proceeding.
+**Elaboration-to-build handoff gate:** after elaboration sign-off, do not execute any implementation work until every agreed unit has a materialized unit file, an owning bolt, a matching backlog entry, and a link from the intent's Extracted Units table. If any artifact or link is missing, stop and report the incomplete handoff instead of proceeding. Once the checks pass, set the owning bolt's `Artifact handoff` field to `Complete` before planning or executing the bolt.
 **UAT skill:** read `{FRAMEWORK_ROOT}/skills/uat.md` when all units under an intent are marked Done, or when the engineer invokes it directly. Prompt the engineer to run UAT before setting intent status to Implemented.
 **Progress digest skill:** read `{FRAMEWORK_ROOT}/skills/progress-digest.md` when the engineer asks for a stakeholder update, progress summary, or digest for an intent.
 **Process health skill:** read `{FRAMEWORK_ROOT}/skills/process-health.md` when the engineer invokes it to audit how well the AI-DLC process is functioning.
@@ -1157,7 +1157,7 @@ Fields: Status, Intent link, Elaboration link, Bolt link, Priority, Context, Acc
 The **Pre-generation Checks** section is critical for wrapper/layout units — list grep patterns to run across existing files before generating to surface duplication.
 
 ### `ops/build/bolts/_template.md`
-Fields: Status, Goal, Start/Target/Completed dates, Units table, Execution Order diagram, Risks & Assumptions, Definition of Done, Retrospective link.
+Fields: Status, Goal, Start/Target/Completed dates, Artifact handoff, Units table, Execution Order diagram, Risks & Assumptions, Definition of Done, Retrospective link.
 
 ### `ops/operate/retros/_template.md`
 Sections: What Went Well, What Didn't Go Well, AI-Specific Observations (prompts that worked / needed revision / quality gate failures / output accepted without enough review), Actions table, Improvements Triggered (**required** — cannot be left blank without a stated reason), New Intents Triggered, Post-Retro Improvement Workflow.
